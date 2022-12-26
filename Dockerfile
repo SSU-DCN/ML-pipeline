@@ -6,6 +6,8 @@ WORKDIR /facenet/face-recognition
 
 ENTRYPOINT ["python3"]
 
-CMD ["python3","hello.py";,"python3","-m","inference.video_classifier"]
+CMD ["-u","-m","inference.video_classifier"]
+
+#CMD ["python3","hello.py";,"python3","-m","inference.video_classifier"]
 
 #CMD ["-m","inference.video_classifier"]
