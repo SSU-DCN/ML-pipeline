@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-augmentation
+spec:
+  containers:
+  - name: augmentation
+    image: ilsf1004/augmented-data:2.1
+    volumeMounts:
+    - name: nfs-storage
+      mountPath: /root/nfs-storage
+  volumes:
+  - name : nfs-storage
+    hostPath:
+      path: /root/nfs-storage
+      type: Directory
+  restartPolicy: OnFailure
