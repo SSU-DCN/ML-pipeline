@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: file
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: kubeflow-2
+  template:
+    container:
+      volumeMounts:
+        - mountPath: /test-data
+          name: pv-01
+    volumes:
+      - name: pv-01
+        persistentVolumeClaim:
+          claimName: data-pvc3
+  file:
+    example:
+      watchPathConfig:
+        directory: /test-data/
+        pathRegexp: "[a-z]+"
+      eventType: CREATE
+
