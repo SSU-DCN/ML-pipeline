@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: train
-    image: dbswlgp99/dbswlgp99:1
+    image: dbswlgp99/dbswlgp99:0.0.1
     volumeMounts:
     - name: nfs-storage
       mountPath: /root/nfs-storage
