@@ -1,0 +1,79 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: pipeline-
+spec:
+  entrypoint: pipeline
+  volumes:
+  - name : nfs-storage
+    hostPath:
+      path: /root/nfs-storage
+      type: Directory
+  - name : docker-sock
+    hostPath:
+      path: /var/run
+      type: Directory
+
+  templates:
+
+  - name: augmentation
+    container:
+      image: ilsf1004/augmented-data:2.1
+      volumeMounts:
+      - name: nfs-storage
+        mountPath: /root/nfs-storage
+
+  - name: train
+    container:
+      image: dbswlgp99/dbswlgp99:0.0.1.99999999999
+      volumeMounts:
+      - name: nfs-storage
+        mountPath: /root/nfs-storage
+      workingDir: /facenet/face-recognition
+      command: ["/bin/bash"]
+      args: ["/facenet/face-recognition/tasks/train.sh", "/root/nfs-storage/before/storage/augmented-data"]
+
+  - name: git-push
+    container:
+      image: dbswlgp99/testtest:0.5
+      volumeMounts:
+      - name: nfs-storage
+        mountPath: /root/nfs-storage
+      - name: docker-sock
+        mountPath: /var/run  
+      workingDir: /root/nfs-storage/before/storage/trained-model
+      command: ["/bin/bash","-c"]
+      args:
+      - cp ./face_recogniser2.pkl ../face_recogniser_tmp.pkl;
+        rm -rf ./face_recogniser2.pkl;
+        cp ./Dockerfile ../Dockerfile_tmp;
+        cp ./Jenkinsfile ../Jenkinsfile_tmp;
+        git pull;
+        rm -rf .gitattributes;
+        git lfs untrack "*.pkl";
+        git lfs track "face_recogniser.pkl";
+        git add .gitattributes;
+        cp ../face_recogniser_tmp.pkl ./face_recogniser2.pkl;
+        cp ../face_recogniser_tmp.pkl ./face_recogniser.pkl;
+        cp ../Dockerfile_tmp ./Dockerfile;
+        cp ../Jenkinsfile_tmp ./Jenkinsfile;
+        docker build -t dbswlgp99/edge-image:latest .;
+        docker push dbswlgp99/edge-image:latest;
+        git lfs ls-files --all;
+        git add face_recogniser.pkl Dockerfile Jenkinsfile;
+        git commit -m "message";
+        git push -u origin3 +main;
+
+  - name: pipeline
+    dag:
+      tasks:
+      - name: Augmentation
+        template: augmentation
+      - name: Train
+        template: train
+        dependencies: [Augmentation]
+      - name: Git-push
+        template: git-push
+        dependencies: [Train]
+
+
