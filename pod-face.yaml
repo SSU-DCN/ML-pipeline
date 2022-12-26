@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-train
+spec:
+  containers:
+  - name: train
+    image: dbswlgp99/dbswlgp99:1
+    volumeMounts:
+    - name: nfs-storage
+      mountPath: /root/nfs-storage
+    workingDir: /facenet/face-recognition
+    command: ["/bin/bash"]
+    args: ["/facenet/face-recognition/tasks/train.sh", "/root/nfs-storage/before/storage/augmented-data"]
+  volumes:
+  - name : nfs-storage
+    hostPath:
+      path: /root/nfs-storage
+      type: Directory
+  restartPolicy: OnFailure
