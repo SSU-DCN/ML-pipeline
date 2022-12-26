@@ -3,7 +3,7 @@ node {
     checkout scm
   }
   stage('========== Build image ==========') {
-    app = docker.build("dbswlgp99/edge-image", "Dockerfile이 있는 디렉터리 경로")
+    app = docker.build("dbswlgp99/edge-image", "/var/lib/jenkins/workspace/jenkins-test")
   }
   stage('========== Push image ==========') {
     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_dbswlgp99') {
