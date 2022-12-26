@@ -5,8 +5,8 @@ metadata:
 spec:
   containers:
   - name: git
-    image: ilsf1004/git:2.5
-    #image: dbswlgp99/testtest:0.5
+    #image: ilsf1004/git:2.5
+    image: dbswlgp99/testtest:0.5
     volumeMounts:
     - name: nfs-storage
       mountPath: /root/nfs-storage
